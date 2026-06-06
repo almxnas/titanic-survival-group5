@@ -1,4 +1,4 @@
-# 🚢 Titanic Survival Prediction - Group 5
+<img width="1851" height="793" alt="image" src="https://github.com/user-attachments/assets/1859ff16-b184-4cc8-b776-618ff9b36881" /># 🚢 Titanic Survival Prediction - Group 5
 
 **Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)
 
@@ -9,11 +9,13 @@ Streamlit web app for Titanic Survival Prediction using Logistic Regression and 
 
 ---
 
-## 🌐 Live Demo
+## 📊 Live Demo
 
-[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/)
+Click the link below to open the app:
 
-Click the badge above or [**click here**](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/) to open the live application.
+🔗 **[Streamlit Deployed App]([https://your-streamlit-link-here.streamlit.app](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/))**
+
+
 ---
 
 ## 📓 Google Colab Notebook
