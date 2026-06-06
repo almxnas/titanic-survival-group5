@@ -32,7 +32,7 @@ The notebook includes 18 organized cells showing:
 
 ## 👥 Group Members
 
-| Member |
+| Name |
 |--------|
 | Al Meerah Anas |
 | Fathima Hiba |
