@@ -279,7 +279,3 @@ if st.button("🚀 Predict Survival", type="primary"):
         else:
             st.error(f"❌ **Random Forest**: DID NOT SURVIVE")
         st.caption(f"Confidence: {prob_rf:.1%}")
-    
-    # Show feature impact explanation
-    st.markdown("---")
-    st.caption("💡 Tip: First-class women typically have higher survival probability. Third-class men typically have lower survival probability.")
