@@ -9,12 +9,11 @@ Streamlit web app for Titanic Survival Prediction using Logistic Regression and 
 
 ---
 
-## 📊 Live Demo
+## 🌐 Live Demo
 
-Click the link below to open the app:
+[![Streamlit App](https://static.streamlit.io/badges/streamlit_badge_black_white.svg)](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/)
 
-🔗 **[Streamlit Deployed App]([https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/])**
-
+Click the badge above or [**click here**](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/) to open the live application.
 ---
 
 ## 📓 Google Colab Notebook
