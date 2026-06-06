@@ -210,13 +210,3 @@ if predict_clicked:
     else:
         st.error("💔 **VERDICT: The passenger would likely NOT SURVIVE the Titanic disaster.** 💔")
 
-# ==================== FOOTER ====================
-st.markdown("---")
-st.markdown("""
-| 🔬 Model | 📊 Accuracy | 🛠️ Built With |
-|----------|-------------|----------------|
-| Logistic Regression | 81% | Python, Scikit-learn |
-| Random Forest | 81% | Streamlit, Pandas |
-
-📚 Based on Kaggle Titanic dataset | 🚢 Group 5 - BICS 2303
-""")
