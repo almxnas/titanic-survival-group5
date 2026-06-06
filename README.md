@@ -1,9 +1,8 @@
-<img width="1851" height="793" alt="image" src="https://github.com/user-attachments/assets/1859ff16-b184-4cc8-b776-618ff9b36881" /># 🚢 Titanic Survival Prediction - Group 5
+# 🚢 Titanic Survival Prediction - Group 5
 
 **Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)
 
-[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]
-(https://colab.research.google.com/drive/1XgtMofJ_QskmbdwsyBSQMr7wi20qAz5l?usp=sharing)
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1XgtMofJ_QskmbdwsyBSQMr7wi20qAz5l?usp=sharing)
 
 Streamlit web app for Titanic Survival Prediction using Logistic Regression and Random Forest.
 
@@ -13,8 +12,7 @@ Streamlit web app for Titanic Survival Prediction using Logistic Regression and 
 
 Click the link below to open the app:
 
-🔗 **[Streamlit Deployed App]([https://your-streamlit-link-here.streamlit.app](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/))**
-
+🔗 **[Streamlit Deployed App](https://titanic-survival-group5-bufg3gnltncw2czmbgpjt3.streamlit.app/)**
 
 ---
 
@@ -34,11 +32,13 @@ The notebook includes 18 organized cells showing:
 
 ## 👥 Group Members
 
-Al Meerah Anas
-| Fathima Hiba 
-| Ro Ha Ni Fauji
-| Sadia Ahmad 
-| Huaidah Dina 
+| Member |
+|--------|
+| Al Meerah Anas |
+| Fathima Hiba |
+| Ro Ha Ni Fauji |
+| Sadia Ahmad |
+| Huaidah Dina |
 
 ---
 
