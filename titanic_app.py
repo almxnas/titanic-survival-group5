@@ -166,6 +166,3 @@ if st.button("Predict Survival", type="primary", use_container_width=True):
     st.progress(int(survival_chance_rf))
     st.caption(f"{survival_chance_rf:.1f}% chance of survival")
 
-# ==================== FOOTER ====================
-st.markdown("---")
-st.caption("Model trained on Kaggle Titanic dataset | 81% accuracy | Built with Streamlit")
