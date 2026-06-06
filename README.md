@@ -55,7 +55,7 @@ The notebook includes 18 organized cells showing:
 
 ```bash
 # Clone the repository
-git clone https://github.com/your-username/titanic-survival-group5.git
+git clone https://github.com/almxnas/titanic-survival-group5.git
 
 # Install dependencies
 pip install -r requirements.txt
