@@ -34,10 +34,10 @@ The notebook includes 18 organized cells showing:
 ## 👥 Group Members
 
 Al Meerah Anas
-Fathima Hiba 
-Ro Ha Ni Fauji
-Sadia Ahmad 
-Huaidah Dina 
+| Fathima Hiba 
+| Ro Ha Ni Fauji
+| Sadia Ahmad 
+| Huaidah Dina 
 
 ---
 
