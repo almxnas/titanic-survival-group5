@@ -8,7 +8,7 @@ from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
 
-# ==================== TITLE ====================
+# ==================== TITLE WITH EMOJIS ====================
 st.title("🚢 Titanic Survival Prediction - Group 5")
 st.markdown("**🎯 Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
 
@@ -58,8 +58,8 @@ st.markdown("📝 Enter passenger details below and click **Predict Survival** t
 
 st.markdown("---")
 
-# TWO columns only (Class and Sex) - NO AGE
-col1, col2 = st.columns(2)
+# Three columns for inputs
+col1, col2, col3 = st.columns(3)
 
 with col1:
     st.markdown("#### 🎫 Passenger Class")
@@ -77,11 +77,23 @@ with col2:
         "Select Sex",
         ["👩 Female", "👨 Male"],
         horizontal=True,
-        help="Women were evacuated first",
+        help="Women and children were evacuated first",
         label_visibility="collapsed"
     )
     # Clean the sex value for processing
     sex_clean = "Female" if "Female" in sex else "Male"
+
+with col3:
+    st.markdown("#### 📅 Age")
+    age = st.slider(
+        "Select Age",
+        min_value=0,
+        max_value=100,
+        value=30,
+        step=1,
+        help="Children under 15 were given priority",
+        label_visibility="collapsed"
+    )
 
 st.markdown("---")
 
@@ -92,10 +104,11 @@ with st.expander("📊 What affects survival? (Click to expand)"):
     |-----------|-------------------|
     | **🎫 Passenger Class** | 1st class: 62% survived &nbsp;&nbsp;&nbsp; 3rd class: 26% survived |
     | **👤 Sex** | Women: 74% survived &nbsp;&nbsp;&nbsp; Men: 19% survived |
+    | **📅 Age** | Children (under 15): 54% survived &nbsp;&nbsp;&nbsp; Adults: 38% survived |
     
     ---
     
-    💡 **Class and Sex were the TWO strongest predictors of survival on the Titanic.**
+    💡 **These three factors were the strongest predictors of survival on the Titanic.**
     """)
 
 # Predict button
@@ -108,11 +121,10 @@ if predict_clicked:
     sex_encoded = 1 if sex_clean == "Female" else 0
     realistic_fare = avg_fare[pclass]
     
-    # Use default values for other features
     input_data = pd.DataFrame({
         'Pclass': [pclass],
         'Sex': [sex_encoded],
-        'Age': [30],           # Default age (doesn't affect much)
+        'Age': [age],
         'SibSp': [0],
         'Parch': [0],
         'Fare': [realistic_fare],
@@ -151,6 +163,9 @@ if predict_clicked:
     st.markdown("---")
     st.markdown("### 🤔 Why this prediction?")
     
+    # Create two columns for reasons
+    col_reason1, col_reason2 = st.columns(2)
+    
     reasons_positive = []
     reasons_negative = []
     
@@ -168,7 +183,11 @@ if predict_clicked:
     else:
         reasons_negative.append("👨 Men had lower priority during evacuation")
     
-    col_reason1, col_reason2 = st.columns(2)
+    # Age reasons
+    if age < 15:
+        reasons_positive.append("🧒 Children were given priority")
+    elif age > 60:
+        reasons_negative.append("👴 Elderly passengers had lower survival rates")
     
     with col_reason1:
         if reasons_positive:
@@ -182,31 +201,47 @@ if predict_clicked:
             for r in reasons_negative:
                 st.markdown(f"- {r}")
     
-    # Passenger Summary
+    if not reasons_positive and not reasons_negative:
+        st.info("ℹ️ This passenger had mixed factors affecting survival.")
+    
+    # Passenger Summary with emojis
     st.markdown("---")
     st.markdown("### 📋 Passenger Summary")
     
-    col_sum1, col_sum2, col_sum3 = st.columns(3)
+    col_sum1, col_sum2, col_sum3, col_sum4 = st.columns(4)
     
     class_emoji = {1: "👑", 2: "📘", 3: "⚓"}
-    sex_emoji = "👩" if sex_clean == "Female" else "👨"
-    survival_chance = prob_rf * 100
     
     with col_sum1:
         st.metric("🎫 Class", f"{class_emoji[pclass]} {pclass}{'st' if pclass==1 else 'nd' if pclass==2 else 'rd'} Class")
     with col_sum2:
+        sex_emoji = "👩" if sex_clean == "Female" else "👨"
         st.metric("👤 Sex", f"{sex_emoji} {sex_clean}")
     with col_sum3:
+        age_emoji = "🧒" if age < 15 else "👤" if age < 60 else "👴"
+        st.metric("📅 Age", f"{age_emoji} {age} years")
+    with col_sum4:
+        survival_chance = prob_rf * 100
         st.metric("📊 Survival Chance", f"{survival_chance:.1f}%")
     
     # Survival probability bar
     st.markdown("**📈 Survival Probability Meter:**")
     st.progress(int(survival_chance))
     
-    # Final verdict
+    # Final verdict emoji
     if pred_rf == 1:
         st.balloons()
         st.success("🎉 **VERDICT: The passenger would likely SURVIVE the Titanic disaster!** 🎉")
     else:
         st.error("💔 **VERDICT: The passenger would likely NOT SURVIVE the Titanic disaster.** 💔")
 
+# ==================== FOOTER ====================
+st.markdown("---")
+st.markdown("""
+| 🔬 Model | 📊 Accuracy | 🛠️ Built With |
+|----------|-------------|----------------|
+| Logistic Regression | 81% | Python, Scikit-learn |
+| Random Forest | 81% | Streamlit, Pandas |
+
+📚 Based on Kaggle Titanic dataset | 🚢 Group 5 - BICS 2303
+""")
