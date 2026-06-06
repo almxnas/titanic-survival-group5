@@ -8,10 +8,8 @@ from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
 
-st.title("🚢 Titanic Survival Prediction - Group 5")
+st.title("Titanic Survival Prediction - Group 5")
 st.markdown("**Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
-
-st.markdown("---")
 
 # ==================== LOAD & TRAIN MODEL ====================
 @st.cache_data
@@ -23,6 +21,7 @@ def load_data():
 def train_models():
     df = load_data()
     
+    # Preprocessing
     df = df.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1, errors='ignore')
     df['Age'] = df['Age'].fillna(df['Age'].mean())
     df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
@@ -32,6 +31,7 @@ def train_models():
     df['Sex'] = le_sex.fit_transform(df['Sex'])
     df['Embarked'] = le_emb.fit_transform(df['Embarked'])
     
+    # Note: Fare is kept for model training but not shown in UI
     X = df.drop('Survived', axis=1)
     y = df['Survived']
     
@@ -43,105 +43,131 @@ def train_models():
     lr.fit(X_train, y_train)
     rf.fit(X_train, y_train)
     
+    # Get average fare by class for default values
     avg_fare = df.groupby('Pclass')['Fare'].mean().to_dict()
     
     return lr, rf, le_sex, le_emb, avg_fare
 
 lr, rf, le_sex, le_emb, avg_fare = train_models()
 
-# ==================== LIVE PREDICTION ====================
-st.header("🎯 Live Survival Prediction")
+# ==================== LIVE PREDICTION DEMO ====================
+st.header("Live Survival Prediction")
 
 st.markdown("Enter passenger details below and click **Predict Survival** to see the result.")
 
 st.markdown("---")
 
-col1, col2 = st.columns(2)
+# Three simple inputs - all that matters!
+col1, col2, col3 = st.columns(3)
 
 with col1:
-    st.subheader("Passenger Details")
-    
     pclass = st.selectbox(
         "Passenger Class", 
         [1, 2, 3],
-        format_func=lambda x: {1: "1st Class", 2: "2nd Class", 3: "3rd Class"}[x]
+        format_func=lambda x: {1: "1st Class (Upper)", 2: "2nd Class (Middle)", 3: "3rd Class (Lower)"}[x],
+        help="1st class had priority access to lifeboats"
     )
-    
-    sex = st.radio("Sex", ["Female", "Male"], horizontal=True)
-    
-    age = st.slider("Age (years)", min_value=0, max_value=100, value=30, step=1)
 
 with col2:
-    st.subheader("💡 Survival Tips")
-    
-    st.markdown("**Based on historical Titanic data:**")
-    st.caption("👑 1st Class: 62% survived")
-    st.caption("📘 2nd Class: 41% survived")
-    st.caption("⚓ 3rd Class: 26% survived")
-    st.caption("")
-    st.caption("👩 Women: 74% survived")
-    st.caption("👨 Men: 19% survived")
-    st.caption("")
-    st.caption("🧒 Children (under 15): 54% survived")
-    st.caption("👤 Adults: 38% survived")
+    sex = st.radio(
+        "Sex",
+        ["Female", "Male"],
+        horizontal=True,
+        help="Women and children were evacuated first"
+    )
+
+with col3:
+    age = st.slider(
+        "Age (years)",
+        min_value=0,
+        max_value=100,
+        value=30,
+        step=1,
+        help="Children under 15 were given priority"
+    )
 
 st.markdown("---")
 
-if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
+# Show survival factors explanation
+with st.expander("What affects survival?"):
+    st.markdown("""
+    | Factor | Why It Matters |
+    |--------|----------------|
+    | **Passenger Class** | 1st class had better lifeboat access (62% survived vs 26% in 3rd class) |
+    | **Sex** | Women were evacuated first (74% survived vs 19% of men) |
+    | **Age** | Children were prioritized (54% of children survived vs 38% of adults) |
+    
+    *These three factors were the strongest predictors of survival on the Titanic.*
+    """)
+
+# Predict button
+if st.button("Predict Survival", type="primary", use_container_width=True):
+    # Convert inputs
     sex_encoded = 1 if sex == "Female" else 0
+    
+    # Use realistic default values based on class
+    # Fare is determined by class (not user input)
     realistic_fare = avg_fare[pclass]
     
+    # Default values for other features (set to most common/normal values)
     input_data = pd.DataFrame({
         'Pclass': [pclass],
         'Sex': [sex_encoded],
         'Age': [age],
-        'SibSp': [0],
-        'Parch': [0],
-        'Fare': [realistic_fare],
-        'Embarked': [0]
+        'SibSp': [0],      # Default: traveling alone (most common)
+        'Parch': [0],      # Default: no children (most common)  
+        'Fare': [realistic_fare],  # Automatically set by class
+        'Embarked': [0]    # Default: Southampton (most common)
     })
     
-    pred_lr = lr.predict(input_data)[0]
-    prob_lr = lr.predict_proba(input_data)[0][1]
+    # Get predictions
     pred_rf = rf.predict(input_data)[0]
     prob_rf = rf.predict_proba(input_data)[0][1]
     
+    # Display result prominently
     st.markdown("---")
-    st.subheader("📊 Prediction Results")
+    st.subheader("Prediction Result")
     
-    col_res1, col_res2 = st.columns(2)
+    # Big result box
+    result_col1, result_col2 = st.columns([2, 1])
     
-    with col_res1:
-        st.markdown("### Logistic Regression")
-        if pred_lr == 1:
-            st.success("✅ **SURVIVED**")
-        else:
-            st.error("❌ **DID NOT SURVIVE**")
-        st.caption(f"Confidence: {prob_lr:.1%}")
-    
-    with col_res2:
-        st.markdown("### Random Forest")
+    with result_col1:
         if pred_rf == 1:
-            st.success("✅ **SURVIVED**")
+            st.success("## SURVIVED")
+            st.caption(f"Confidence: {prob_rf:.1%}")
         else:
-            st.error("❌ **DID NOT SURVIVE**")
-        st.caption(f"Confidence: {prob_rf:.1%}")
+            st.error("## DID NOT SURVIVE")
+            st.caption(f"Confidence: {prob_rf:.1%}")
     
+    with result_col2:
+        # Survival chance meter
+        survival_chance = prob_rf * 100
+        st.metric("Survival Probability", f"{survival_chance:.1f}%")
+        st.progress(int(survival_chance))
+    
+    # Why this prediction?
     st.markdown("---")
-    st.markdown("### Passenger Summary")
+    st.markdown("### Why this prediction?")
     
-    col_sum1, col_sum2, col_sum3 = st.columns(3)
-    with col_sum1:
-        st.metric("Class", f"{pclass}{'st' if pclass==1 else 'nd' if pclass==2 else 'rd'} Class")
-    with col_sum2:
-        st.metric("Sex", sex)
-    with col_sum3:
-        st.metric("Age", f"{age} years")
+    reasons = []
+    if pclass == 1:
+        reasons.append("✓ First-class passengers had priority access to lifeboats")
+    elif pclass == 3:
+        reasons.append("✗ Third-class passengers had limited lifeboat access")
     
-    survival_chance = prob_rf * 100
-    st.markdown("**Survival Probability (Random Forest):**")
-    st.progress(int(survival_chance))
-    st.caption(f"{survival_chance:.1f}% chance of survival")
+    if sex == "Female":
+        reasons.append("✓ Women were evacuated first")
+    else:
+        reasons.append("✗ Men had lower priority during evacuation")
+    
+    if age < 15:
+        reasons.append("✓ Children were given priority")
+    elif age > 60:
+        reasons.append("✗ Elderly passengers had lower survival rates")
+    
+    for reason in reasons:
+        st.markdown(reason)
 
+# ==================== FOOTER ====================
 st.markdown("---")
-st.caption("🔬 Model trained on Kaggle Titanic dataset | 81% accuracy | Built with Streamlit")
+st.caption("Based on Kaggle Titanic dataset | Model accuracy: 81% | Built with Streamlit")
