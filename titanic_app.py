@@ -8,7 +8,6 @@ from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
 
-# Title
 st.title("🚢 Titanic Survival Prediction - Group 5")
 st.markdown("**Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
 
@@ -24,7 +23,6 @@ def load_data():
 def train_models():
     df = load_data()
     
-    # Preprocessing
     df = df.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1, errors='ignore')
     df['Age'] = df['Age'].fillna(df['Age'].mean())
     df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
@@ -51,14 +49,13 @@ def train_models():
 
 lr, rf, le_sex, le_emb, avg_fare = train_models()
 
-# ==================== LIVE PREDICTION SECTION ====================
+# ==================== LIVE PREDICTION ====================
 st.header("🎯 Live Survival Prediction")
 
 st.markdown("Enter passenger details below and click **Predict Survival** to see the result.")
 
 st.markdown("---")
 
-# Two column layout (like your older version)
 col1, col2 = st.columns(2)
 
 with col1:
@@ -67,68 +64,31 @@ with col1:
     pclass = st.selectbox(
         "Passenger Class", 
         [1, 2, 3],
-        format_func=lambda x: {1: "1st Class", 2: "2nd Class", 3: "3rd Class"}[x],
-        help="1st class had priority access to lifeboats"
+        format_func=lambda x: {1: "1st Class", 2: "2nd Class", 3: "3rd Class"}[x]
     )
     
-    sex = st.radio(
-        "Sex",
-        ["Female", "Male"],
-        horizontal=True,
-        help="Women and children were evacuated first"
-    )
+    sex = st.radio("Sex", ["Female", "Male"], horizontal=True)
     
-    age = st.slider(
-        "Age (years)",
-        min_value=0,
-        max_value=100,
-        value=30,
-        step=1,
-        help="Children under 15 were given priority"
-    )
+    age = st.slider("Age (years)", min_value=0, max_value=100, value=30, step=1)
 
 with col2:
-    st.subheader("Survival Factors")
+    st.subheader("💡 Survival Tips")
     
-    # Show historical survival rates based on selection
-    st.markdown("### Historical Titanic Data")
-    
-    # Dynamic stats based on user selection
-    if pclass == 1:
-        class_survival = "62% survived"
-    elif pclass == 2:
-        class_survival = "41% survived"
-    else:
-        class_survival = "26% survived"
-    
-    if sex == "Female":
-        sex_survival = "74% survived"
-    else:
-        sex_survival = "19% survived"
-    
-    if age < 15:
-        age_survival = "54% survived"
-    else:
-        age_survival = "38% survived"
-    
-    st.markdown(f"""
-    | Factor | Historical Survival Rate |
-    |--------|--------------------------|
-    | **Class {pclass}** | {class_survival} |
-    | **{sex}** | {sex_survival} |
-    | **Age {age}** | {age_survival if age < 15 else 'Adult: 38% survived'} |
-    """)
-    
-    st.caption("Based on actual Titanic passenger data")
+    st.markdown("**Based on historical Titanic data:**")
+    st.caption("👑 1st Class: 62% survived")
+    st.caption("📘 2nd Class: 41% survived")
+    st.caption("⚓ 3rd Class: 26% survived")
+    st.caption("")
+    st.caption("👩 Women: 74% survived")
+    st.caption("👨 Men: 19% survived")
+    st.caption("")
+    st.caption("🧒 Children (under 15): 54% survived")
+    st.caption("👤 Adults: 38% survived")
 
 st.markdown("---")
 
-# Predict button
 if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
-    # Convert inputs
     sex_encoded = 1 if sex == "Female" else 0
-    
-    # Use realistic fare based on class
     realistic_fare = avg_fare[pclass]
     
     input_data = pd.DataFrame({
@@ -141,7 +101,6 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
         'Embarked': [0]
     })
     
-    # Get predictions
     pred_lr = lr.predict(input_data)[0]
     prob_lr = lr.predict_proba(input_data)[0][1]
     pred_rf = rf.predict(input_data)[0]
@@ -150,7 +109,6 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
     st.markdown("---")
     st.subheader("📊 Prediction Results")
     
-    # Two columns for results (like older layout)
     col_res1, col_res2 = st.columns(2)
     
     with col_res1:
@@ -169,7 +127,6 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
             st.error("❌ **DID NOT SURVIVE**")
         st.caption(f"Confidence: {prob_rf:.1%}")
     
-    # Passenger summary
     st.markdown("---")
     st.markdown("### Passenger Summary")
     
@@ -181,8 +138,10 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
     with col_sum3:
         st.metric("Age", f"{age} years")
     
-    # Survival chance
     survival_chance = prob_rf * 100
     st.markdown("**Survival Probability (Random Forest):**")
     st.progress(int(survival_chance))
     st.caption(f"{survival_chance:.1f}% chance of survival")
+
+st.markdown("---")
+st.caption("🔬 Model trained on Kaggle Titanic dataset | 81% accuracy | Built with Streamlit")
