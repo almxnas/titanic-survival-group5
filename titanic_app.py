@@ -78,11 +78,14 @@ with col2:
     st.metric("Recall", f"{recall_score(y_test, y_pred_rf):.1%}")
     st.metric("F1-Score", f"{f1_score(y_test, y_pred_rf):.1%}")
 
-# Confusion Matrix
+# Confusion Matrix 
 st.subheader("Confusion Matrix (Random Forest)")
-fig, ax = plt.subplots()
-sns.heatmap(confusion_matrix(y_test, y_pred_rf), annot=True, fmt='d', cmap='Blues', ax=ax)
-st.pyplot(fig)
+cm = confusion_matrix(y_test, y_pred_rf)
+cm_df = pd.DataFrame(cm, 
+                     index=['Actual Died', 'Actual Survived'],
+                     columns=['Predicted Died', 'Predicted Survived'])
+
+st.table(cm_df)
 
 # ==================== 5. LIVE PREDICTION ====================
 st.header("5. Live Prediction (Interactive Demo)")
