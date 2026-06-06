@@ -64,7 +64,6 @@ with col1:
 with col2:
     sex = st.radio("Sex", ["Female", "Male"], horizontal=True)
 
-# Expandable info
 with st.expander("📊 What affects survival? (Click to expand)"):
     st.markdown("""
     | Factor | Survival Rate |
@@ -117,42 +116,49 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
         st.caption(f"Confidence: {prob_rf:.1%}")
     
     # ==================== VISUAL EFFECTS ====================
+    st.markdown("---")
     
-    # SURVIVED = Balloons + Confetti effect
     if pred_rf == 1:
-        st.balloons()  # Balloons floating up
-        st.snow()      # Also snow/confetti effect
+        # SURVIVED - Balloons and celebration
+        st.balloons()
         st.success("🎉 **VERDICT: The passenger would SURVIVE the Titanic disaster!** 🎉")
         
-        # Happy face meter
         survival_chance = prob_rf * 100
         st.markdown(f"**📈 Survival Probability:** {survival_chance:.1f}%")
         st.progress(int(survival_chance))
         
-        # Extra celebration
-        st.markdown("### 🎊 RESULT: SURVIVED 🎊")
+        # Happy passenger summary
+        col_happy1, col_happy2, col_happy3 = st.columns(3)
+        with col_happy1:
+            st.markdown("🎫 **Class:** Safe")
+        with col_happy2:
+            st.markdown("🚤 **Lifeboat:** Accessed")
+        with col_happy3:
+            st.markdown("✅ **Status:** Alive")
     
-    # DID NOT SURVIVE = Dramatic effects
     else:
-        # Warning + Sad effects
+        # DID NOT SURVIVE - Death visual effect
         st.error("💀 **VERDICT: The passenger would NOT SURVIVE the Titanic disaster.** 💀")
         
-        # Show a sad/message
-        st.markdown("### 🌊 RESULT: DID NOT SURVIVE 🌊")
+        # Death animation - skull and wave pattern
+        st.markdown("### 💀🌊💀🌊💀")
+        st.markdown("**FATAL OUTCOME - Lost at Sea**")
+        st.markdown("### 🌊💀🌊💀🌊")
         
-        # Death probability meter (reversed)
         death_chance = (1 - prob_rf) * 100
         st.markdown(f"**📉 Fatality Probability:** {death_chance:.1f}%")
         st.progress(int(death_chance))
         
-        # Iceberg emoji warning
-        st.warning("🧊⚠️ **Iceberg collision was fatal for this passenger** ⚠️🧊")
-        
-        # No balloons - maybe a sad wave
-        st.markdown("---")
-        st.markdown("🌊🌊🌊 *The cold waters of the Atlantic...* 🌊🌊🌊")
+        # Sad passenger summary
+        col_sad1, col_sad2, col_sad3 = st.columns(3)
+        with col_sad1:
+            st.markdown("🎫 **Class:** Lost")
+        with col_sad2:
+            st.markdown("🧊 **Iceberg:** Fatal")
+        with col_sad3:
+            st.markdown("❌ **Status:** Deceased")
     
-    # Why this prediction? (for both cases)
+    # Why this prediction?
     st.markdown("---")
     st.markdown("### 🤔 Why this prediction?")
     
@@ -171,17 +177,6 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
             st.markdown("✅ Women were evacuated first")
         else:
             st.markdown("❌ Men had lower priority during evacuation")
-    
-    # Passenger summary
-    st.markdown("---")
-    st.markdown("### 📋 Passenger Summary")
-    
-    col_sum1, col_sum2 = st.columns(2)
-    
-    with col_sum1:
-        st.metric("Passenger Class", f"{pclass}{'st' if pclass==1 else 'nd' if pclass==2 else 'rd'} Class")
-    with col_sum2:
-        st.metric("Sex", sex)
 
 st.markdown("---")
 st.caption("🔬 Model accuracy: 81% | Built with Streamlit | Based on Kaggle Titanic dataset")
