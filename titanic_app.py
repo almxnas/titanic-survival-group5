@@ -125,6 +125,6 @@ if st.button("🚀 PREDICT SURVIVAL", type="primary", use_container_width=True):
     # Balloons if survived
     if pred_rf == 1:
         st.balloons()
-        st.success("🎉 **The Titanic sank, but they didn't!** 🎉")
+        st.success("**The Titanic sank, but they didn't!** 🎉")
     else:
-        st.error("💀 **This passenger went to join Jack at the bottom of the ocean.** 💀")
+        st.error("**This passenger went to join Jack at the bottom of the ocean.** 💀")
