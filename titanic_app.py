@@ -57,7 +57,6 @@ with st.expander("📊 What affects survival?"):
     | **📅 Age** | Children were given priority to lifeboats | Children: 54% | Adults: 38% |
     
     ---
-    
     💡 **Key Insights:**
     - 🚤 Lifeboats could only hold 1,178 people (not enough for 2,224)
     - 👑 First-class passengers were closest to lifeboats
