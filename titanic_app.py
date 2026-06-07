@@ -47,6 +47,23 @@ def train_models():
 
 lr, rf, le_sex, le_emb, avg_fare = train_models()
 
+# ==================== WHAT AFFECTS SURVIVAL? (EXPANDER - BEFORE INPUTS) ====================
+with st.expander("📊 What affects survival?"):
+    st.markdown("""
+    | 👑 Factor | 📈 Why It Matters | 📉 Survival Rate |
+    |-----------|-------------------|------------------|
+    | **🎫 Passenger Class** | 1st class had priority access to lifeboats | 1st: 62% | 3rd: 26% |
+    | **👤 Sex** | Women and children were evacuated first | Women: 74% | Men: 19% |
+    | **📅 Age** | Children were given priority to lifeboats | Children: 54% | Adults: 38% |
+    
+    ---
+    
+    💡 **Key Insights:**
+    - 🚤 Lifeboats could only hold 1,178 people (not enough for 2,224)
+    - 👑 First-class passengers were closest to lifeboats
+    - 👩 "Women and children first" was strictly followed
+    - 🧒 Children under 15 had significantly higher survival rates
+    """)
 
 # ==================== LIVE PREDICTION ====================
 st.header("🎯 Live Survival Prediction")
@@ -104,26 +121,10 @@ if st.button("🚀 PREDICT SURVIVAL", type="primary", use_container_width=True):
             st.success(f"✅ **SURVIVED** ({prob_rf:.1%})")
         else:
             st.error(f"❌ **DID NOT SURVIVE** ({prob_rf:.1%})")
-    # ==================== WHAT AFFECTS SURVIVAL? (EXPANDER) ====================
-with st.expander("📊 What affects survival?"):
-    st.markdown("""
-    | 👑 Factor | 📈 Why It Matters | 📉 Survival Rate |
-    |-----------|-------------------|------------------|
-    | **🎫 Passenger Class** | 1st class had priority access to lifeboats | 1st: 62% \| 3rd: 26% |
-    | **👤 Sex** | Women and children were evacuated first | Women: 74% \| Men: 19% |
-    | **📅 Age** | Children were given priority to lifeboats | Children: 54% \| Adults: 38% |
     
-    ---
-    
-    💡 **Key Insights:**
-    - 🚤 Lifeboats could only hold 1,178 people (not enough for 2,224)
-    - 👑 First-class passengers were closest to lifeboats
-    - 👩 "Women and children first" was strictly followed
-    - 🧒 Children under 15 had significantly higher survival rates
-
     # Balloons if survived
     if pred_rf == 1:
         st.balloons()
-        st.success("**The Titanic sank, but they didn't!** 🎉")
+        st.success("🎉 **The Titanic sank, but they didn't!** 🎉")
     else:
-        st.error("**This passenger went to join Jack at the bottom of the ocean.** 💔")
+        st.error("💀 **This passenger went to join Jack at the bottom of the ocean.** 💀")
