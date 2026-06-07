@@ -107,8 +107,6 @@ if st.button("🚀 PREDICT SURVIVAL", type="primary", use_container_width=True):
     # Balloons if survived
     if pred_rf == 1:
         st.balloons()
-        st.success("🎉 **This passenger would likely survive!** 🎉")
+        st.success("🎉 **This passenger had better luck than Jack!** 🧣")
     else:
-        st.error("💔 **This passenger would likely not survive.** 💔")
-
-st.caption("Model matches our group report: Logistic Regression + Random Forest")
+        st.error("💔 **This passenger went to join Jack at the bottom of the ocean.** 💀")
