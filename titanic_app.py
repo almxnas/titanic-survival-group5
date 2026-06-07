@@ -9,7 +9,7 @@ st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
 
 # ==================== TITLE ====================
 st.title("🚢 Titanic Survival Prediction - Group 5")
-st.markdown("**🎯 Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
+st.markdown("**Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
 st.markdown("---")
 
 # ==================== LOAD & TRAIN MODELS ====================
@@ -49,7 +49,7 @@ lr, rf, le_sex, le_emb, avg_fare = train_models()
 
 # ==================== LIVE PREDICTION ====================
 st.header("🎯 Live Survival Prediction")
-st.markdown("📝 Enter passenger details below and click **Predict Survival** to see the result.")
+st.markdown("Enter passenger details below and click **Predict Survival** to see the result.")
 st.markdown("---")
 
 col1, col2, col3 = st.columns(3)
@@ -91,7 +91,7 @@ if st.button("🚀 PREDICT SURVIVAL", type="primary", use_container_width=True):
     
     col_res1, col_res2 = st.columns(2)
     with col_res1:
-        st.markdown("#### 🤖 Logistic Regression")
+        st.markdown("#### ⏱️ Logistic Regression")
         if pred_lr == 1:
             st.success(f"✅ **SURVIVED** ({prob_lr:.1%})")
         else:
