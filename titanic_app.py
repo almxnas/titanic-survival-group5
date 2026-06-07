@@ -1,6 +1,5 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import LabelEncoder
@@ -8,10 +7,12 @@ from sklearn.model_selection import train_test_split
 
 st.set_page_config(page_title="Titanic Survival Predictor", layout="wide")
 
+# ==================== TITLE ====================
 st.title("🚢 Titanic Survival Prediction - Group 5")
-st.markdown("**Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
+st.markdown("**🎯 Binary Classification:** Predict passenger survival (0 = Died, 1 = Survived)")
+st.markdown("---")
 
-# ==================== LOAD & TRAIN MODEL ====================
+# ==================== LOAD & TRAIN MODELS ====================
 @st.cache_data
 def load_data():
     url = "https://raw.githubusercontent.com/datasciencedojo/datasets/master/titanic.csv"
@@ -20,7 +21,7 @@ def load_data():
 @st.cache_resource
 def train_models():
     df = load_data()
-    
+    # Preprocessing
     df = df.drop(['PassengerId', 'Name', 'Ticket', 'Cabin'], axis=1, errors='ignore')
     df['Age'] = df['Age'].fillna(df['Age'].mean())
     df['Embarked'] = df['Embarked'].fillna(df['Embarked'].mode()[0])
@@ -32,7 +33,6 @@ def train_models():
     
     X = df.drop('Survived', axis=1)
     y = df['Survived']
-    
     X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
     
     lr = LogisticRegression(max_iter=200)
@@ -47,45 +47,60 @@ def train_models():
 
 lr, rf, le_sex, le_emb, avg_fare = train_models()
 
+# ==================== WHAT AFFECTS SURVIVAL? (EXPANDER) ====================
+with st.expander("📊 What affects survival? (Click to expand)"):
+    st.markdown("""
+    | 👑 Factor | 📈 Why It Matters | 📉 Survival Rate |
+    |-----------|-------------------|------------------|
+    | **🎫 Passenger Class** | 1st class had priority access to lifeboats | 1st: 62% \| 3rd: 26% |
+    | **👤 Sex** | Women and children were evacuated first | Women: 74% \| Men: 19% |
+    | **📅 Age** | Children were given priority to lifeboats | Children: 54% \| Adults: 38% |
+    
+    ---
+    
+    💡 **Key Insights from Titanic Disaster:**
+    - 🚤 Lifeboats could only hold 1,178 people (not enough for 2,224)
+    - 👑 First-class passengers were closest to lifeboats
+    - 👩 "Women and children first" was strictly followed
+    - 🧒 Children under 15 had significantly higher survival rates
+    
+    ---
+    
+    🔬 **How our model uses this:**
+    Our Logistic Regression and Random Forest models learned these exact patterns from the historical data.
+    """)
+
 # ==================== LIVE PREDICTION ====================
-st.header("Live Survival Prediction")
+st.header("🎯 Live Survival Prediction")
+st.markdown("📝 Enter passenger details below and click **Predict Survival** to see the result.")
+st.markdown("---")
 
-st.markdown("Enter passenger details below and click **Predict Survival** to see the result.")
-
-col1, col2 = st.columns(2)
-
+col1, col2, col3 = st.columns(3)
 with col1:
     pclass = st.selectbox(
         "Passenger Class",
         [1, 2, 3],
-        format_func=lambda x: {1: "1st Class", 2: "2nd Class", 3: "3rd Class"}[x]
+        format_func=lambda x: {1: "👑 1st Class (Upper)", 2: "📘 2nd Class (Middle)", 3: "⚓ 3rd Class (Lower)"}[x]
     )
 
 with col2:
-    sex = st.radio("Sex", ["Female", "Male"], horizontal=True)
+    sex = st.radio("Sex", ["👩 Female", "👨 Male"], horizontal=True)
 
-with st.expander("📊 What affects survival? (Click to expand)"):
-    st.markdown("""
-    | Factor | Survival Rate |
-    |--------|---------------|
-    | **1st Class** | 62% survived |
-    | **2nd Class** | 41% survived |
-    | **3rd Class** | 26% survived |
-    | **Women** | 74% survived |
-    | **Men** | 19% survived |
-    """)
+with col3:
+    age = st.slider("Age", 0, 80, 30)
 
-if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
-    sex_encoded = 1 if sex == "Female" else 0
-    realistic_fare = avg_fare[pclass]
+if st.button("🚀 PREDICT SURVIVAL", type="primary", use_container_width=True):
+    sex_clean = "Female" if "Female" in sex else "Male"
+    sex_encoded = 1 if sex_clean == "Female" else 0
+    fare = avg_fare[pclass]
     
     input_data = pd.DataFrame({
         'Pclass': [pclass],
         'Sex': [sex_encoded],
-        'Age': [30],
+        'Age': [age],
         'SibSp': [0],
         'Parch': [0],
-        'Fare': [realistic_fare],
+        'Fare': [fare],
         'Embarked': [0]
     })
     
@@ -98,85 +113,25 @@ if st.button("🚀 Predict Survival", type="primary", use_container_width=True):
     st.subheader("📊 Prediction Results")
     
     col_res1, col_res2 = st.columns(2)
-    
     with col_res1:
-        st.markdown("### Logistic Regression")
+        st.markdown("#### 🤖 Logistic Regression")
         if pred_lr == 1:
-            st.success("✅ SURVIVED")
+            st.success(f"✅ **SURVIVED** ({prob_lr:.1%})")
         else:
-            st.error("❌ DID NOT SURVIVE")
-        st.caption(f"Confidence: {prob_lr:.1%}")
+            st.error(f"❌ **DID NOT SURVIVE** ({prob_lr:.1%})")
     
     with col_res2:
-        st.markdown("### Random Forest")
+        st.markdown("#### 🌲 Random Forest")
         if pred_rf == 1:
-            st.success("✅ SURVIVED")
+            st.success(f"✅ **SURVIVED** ({prob_rf:.1%})")
         else:
-            st.error("❌ DID NOT SURVIVE")
-        st.caption(f"Confidence: {prob_rf:.1%}")
+            st.error(f"❌ **DID NOT SURVIVE** ({prob_rf:.1%})")
     
-    # ==================== VISUAL EFFECTS ====================
-    st.markdown("---")
-    
+    # Balloons if survived
     if pred_rf == 1:
-        # SURVIVED - Balloons and celebration
         st.balloons()
-        st.success("🎉 **VERDICT: The passenger would SURVIVE the Titanic disaster!** 🎉")
-        
-        survival_chance = prob_rf * 100
-        st.markdown(f"**📈 Survival Probability:** {survival_chance:.1f}%")
-        st.progress(int(survival_chance))
-        
-        # Happy passenger summary
-        col_happy1, col_happy2, col_happy3 = st.columns(3)
-        with col_happy1:
-            st.markdown("🎫 **Class:** Safe")
-        with col_happy2:
-            st.markdown("🚤 **Lifeboat:** Accessed")
-        with col_happy3:
-            st.markdown("✅ **Status:** Alive")
-    
+        st.success("🎉 **This passenger would likely survive!** 🎉")
     else:
-        # DID NOT SURVIVE - Death visual effect
-        st.error("💀 **VERDICT: The passenger would NOT SURVIVE the Titanic disaster.** 💀")
-        
-        # Death animation - skull and wave pattern
-        st.markdown("### 💀🌊💀🌊💀")
-        st.markdown("**FATAL OUTCOME - Lost at Sea**")
-        st.markdown("### 🌊💀🌊💀🌊")
-        
-        death_chance = (1 - prob_rf) * 100
-        st.markdown(f"**📉 Fatality Probability:** {death_chance:.1f}%")
-        st.progress(int(death_chance))
-        
-        # Sad passenger summary
-        col_sad1, col_sad2, col_sad3 = st.columns(3)
-        with col_sad1:
-            st.markdown("🎫 **Class:** Lost")
-        with col_sad2:
-            st.markdown("🧊 **Iceberg:** Fatal")
-        with col_sad3:
-            st.markdown("❌ **Status:** Deceased")
-    
-    # Why this prediction?
-    st.markdown("---")
-    st.markdown("### 🤔 Why this prediction?")
-    
-    col_reason1, col_reason2 = st.columns(2)
-    
-    with col_reason1:
-        if pclass == 1:
-            st.markdown("✅ First-class passengers had priority access to lifeboats")
-        elif pclass == 2:
-            st.markdown("📘 Second-class passengers had decent lifeboat access")
-        else:
-            st.markdown("❌ Third-class passengers had limited lifeboat access")
-    
-    with col_reason2:
-        if sex == "Female":
-            st.markdown("✅ Women were evacuated first")
-        else:
-            st.markdown("❌ Men had lower priority during evacuation")
+        st.error("💔 **This passenger would likely not survive.** 💔")
 
-st.markdown("---")
-st.caption("🔬 Model accuracy: 81% | Built with Streamlit | Based on Kaggle Titanic dataset")
+st.caption("Model matches our group report: Logistic Regression + Random Forest | 81% accuracy")
